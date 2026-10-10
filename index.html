@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HarvestBox | Dinner kits that fit your week</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mitti:#3b2415; --tawa:#6b4423; --jute:#a9794a; --malai:#fbf5ea; --atta:#f1e4cf; --line:#e2cfb0;
+  --haldi:#e9a820; --haldi-soft:#fbe7b0; --leaf:#2f6b45; --leaf-soft:#dcebdf; --kumkum:#b8402d; --ink:#27180e; --muted:#7a6753;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --body:"Hanken Grotesk","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--malai);font-size:17px;line-height:1.5}
+img,svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--haldi);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+h1,h2,h3{font-family:var(--display);line-height:1.05;letter-spacing:-.02em}
+h2{font-size:clamp(30px,3.6vw,46px);font-weight:800;max-width:20ch}
+h3{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.lede{font-size:19px;color:var(--muted);max-width:58ch;margin-top:12px}
+.band{padding:84px 0}
+.band.dark{background:var(--mitti);color:var(--malai)}
+.band.dark .lede{color:#d9c3a5}
+.band.atta{background:var(--atta)}
+
+/* prototype ribbon and strategy notes */
+.ribbon{background:var(--ink);color:#e9d9c2;font-size:14px}
+.ribbon .wrap{display:flex;gap:16px;align-items:center;justify-content:space-between;padding-top:8px;padding-bottom:8px}
+.toggle{background:var(--haldi);color:var(--ink);font-weight:700;border-radius:999px;padding:6px 16px;font-size:14px;white-space:nowrap}
+.note{display:none;margin-top:22px;background:var(--haldi-soft);color:var(--ink);border-left:6px solid var(--haldi);border-radius:0 10px 10px 0;padding:12px 16px;font-size:15.5px;max-width:74ch}
+.note b{font-weight:700}
+body.notes .note{display:block}
+body.notes .judges{display:block}
+.judges{display:none}
+
+/* header */
+header.site{position:sticky;top:0;z-index:20;background:rgba(251,245,234,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.site .wrap{display:flex;align-items:center;gap:26px;height:66px}
+.logo{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.04em;color:var(--tawa);text-decoration:none;display:flex;align-items:center;gap:8px}
+nav.main{display:flex;gap:22px;margin-left:auto;font-weight:600;font-size:15.5px}
+nav.main a{text-decoration:none;padding:6px 0;border-bottom:2px solid transparent}
+nav.main a:hover{border-color:var(--haldi)}
+.btn{display:inline-block;background:var(--haldi);color:var(--ink);font-weight:700;border-radius:10px;padding:12px 22px;text-decoration:none;transition:transform .12s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 2px var(--tawa);color:var(--tawa)}
+.dark .btn.ghost{box-shadow:inset 0 0 0 2px #d9c3a5;color:var(--malai)}
+.btn.small{padding:8px 14px;border-radius:8px;font-size:15px}
+.dark .panel .btn.ghost,.dark .keep .btn.ghost{box-shadow:inset 0 0 0 2px var(--tawa);color:var(--tawa)}
+
+/* hero */
+.hero{padding:56px 0 70px;background:linear-gradient(180deg,var(--malai),var(--atta))}
+.hero .wrap.split{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+.hero h1{font-size:clamp(40px,5.6vw,76px);font-weight:800;color:var(--mitti)}
+.hero h1 span{display:block}
+.hero p.sub{font-size:20px;color:var(--muted);max-width:46ch;margin:20px 0 26px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.deadline{margin-top:24px;display:inline-flex;gap:10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 16px;font-size:15.5px}
+.deadline b{font-family:var(--display);font-size:20px;color:var(--kumkum);font-variant-numeric:tabular-nums}
+.planner{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 18px 0 -8px var(--line)}
+.planner h3{margin-bottom:4px}
+.planner p{color:var(--muted);font-size:15.5px}
+.weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 14px}
+.week{border:2px solid var(--line);border-radius:14px;padding:12px 10px;text-align:center;background:var(--malai);transition:background .2s,border-color .2s}
+.week .d{font-family:var(--display);font-weight:800;font-size:26px;line-height:1}
+.week .m{font-size:13.5px;color:var(--muted)}
+.week .s{margin-top:8px;font-size:13.5px;font-weight:700;color:var(--leaf)}
+.week button{margin-top:8px;font-size:13.5px;font-weight:700;text-decoration:underline;color:var(--tawa)}
+.week.skipped{background:#f3efe8;border-style:dashed}
+.week.skipped .d{color:#b9a995;text-decoration:line-through}
+.week.skipped .s{color:var(--muted)}
+.week.paused{background:var(--haldi-soft);border-color:var(--haldi)}
+.week.paused .s{color:#8a6410}
+.planner .sum{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1.5px dashed var(--line);padding-top:14px;font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:46px;border-top:1.5px solid var(--line)}
+.facts div{padding:18px 20px 0 0}
+.facts b{font-family:var(--display);font-size:30px;font-weight:800;color:var(--tawa);display:block;line-height:1.1}
+.facts span{color:var(--muted);font-size:15.5px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:40px;counter-reset:step}
+.step{counter-increment:step;position:relative;padding-top:54px}
+.step:before{content:counter(step);position:absolute;top:0;left:0;font-family:var(--display);font-weight:800;font-size:44px;line-height:1;color:var(--haldi)}
+.step p{color:#d9c3a5;margin-top:8px}
+
+/* flexibility */
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin-top:36px;border-top:2px solid var(--mitti)}
+.rule{padding:24px 28px 24px 0;border-bottom:1.5px solid var(--line);display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:baseline}
+.rule:nth-child(odd){border-right:1.5px solid var(--line)}
+.rule:nth-child(even){padding-left:28px}
+.rule b{font-family:var(--display);font-size:30px;font-weight:800;color:var(--tawa);line-height:1}
+.rule p{color:var(--muted);margin-top:4px}
+
+/* plans */
+.builder{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:38px;align-items:start}
+.seg{display:flex;background:var(--atta);border-radius:14px;padding:5px;gap:5px;margin:8px 0 22px}
+.seg button{flex:1;padding:14px 8px;border-radius:10px;font-weight:700;font-size:18px;color:var(--tawa)}
+.seg button[aria-pressed="true"]{background:var(--mitti);color:var(--malai)}
+.label{font-weight:700;font-size:15.5px}
+.quote{background:var(--mitti);color:var(--malai);border-radius:22px;padding:30px}
+.quote .price{font-family:var(--display);font-weight:800;font-size:68px;line-height:1;letter-spacing:-.03em}
+.quote .per{color:var(--haldi);font-weight:700;font-size:19px;margin-top:6px}
+.quote ul{list-style:none;margin:20px 0 24px;border-top:1px solid #6b4a30}
+.quote li{padding:10px 0;border-bottom:1px solid #6b4a30;display:flex;justify-content:space-between;gap:14px;font-size:16px}
+.quote li span:last-child{font-weight:700;text-align:right}
+table.prices{width:100%;border-collapse:collapse;margin-top:6px;font-size:16px}
+table.prices th,table.prices td{padding:10px 12px;border-bottom:1.5px solid var(--line);text-align:left}
+table.prices th{font-weight:700;color:var(--muted);font-size:14.5px}
+table.prices td.on{background:var(--haldi-soft);font-weight:700}
+.fine{font-size:14.5px;color:var(--muted);margin-top:12px}
+
+/* menu */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 22px}
+.tabs button{padding:9px 18px;border-radius:999px;font-weight:700;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+.tabs button[aria-pressed="true"]{background:var(--tawa);color:var(--malai);box-shadow:none}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.dish{background:#fff;border-radius:18px;overflow:hidden;border:1.5px solid var(--line);display:flex;flex-direction:column}
+.dish .art{background:var(--atta);padding:16px;display:flex;justify-content:center}
+.dish .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.dish h4{font-family:var(--display);font-size:18.5px;font-weight:700;line-height:1.15}
+.meta{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:center}
+.dot{width:14px;height:14px;border:2px solid var(--leaf);border-radius:3px;display:inline-flex;align-items:center;justify-content:center}
+.dot:after{content:"";width:6px;height:6px;border-radius:50%;background:var(--leaf)}
+.dot.nv{border-color:var(--kumkum)}.dot.nv:after{background:var(--kumkum)}
+.dish button[data-dish]{margin-top:auto;padding:9px;border-radius:9px;font-weight:700;background:var(--atta);color:var(--tawa)}
+.dish button[data-dish].in{background:var(--leaf);color:#fff}
+.dish button[data-dish]:disabled{opacity:.45;cursor:not-allowed}
+.tray{position:sticky;bottom:14px;margin-top:24px;background:var(--mitti);color:var(--malai);border-radius:16px;padding:14px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;z-index:5}
+.tray .chips{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.chip{background:#5a3a22;border-radius:999px;padding:5px 12px;font-size:14.5px}
+
+/* your week */
+.account{display:grid;grid-template-columns:1.25fr .75fr;gap:26px;margin-top:38px;align-items:start}
+.panel{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:26px;color:var(--ink)}
+.rowline{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 0;border-bottom:1.5px solid var(--line)}
+.rowline:last-of-type{border-bottom:0}
+.rowline small{display:block;color:var(--muted);font-size:14.5px}
+select{font:inherit;padding:8px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--malai)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.status{margin-top:16px;border-radius:12px;padding:12px 16px;font-weight:600;background:var(--leaf-soft);color:#1f4a30}
+.status.warn{background:var(--haldi-soft);color:#6d4d08}
+.status.off{background:#f3efe8;color:var(--muted)}
+.meter{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0 12px}
+.meter i{height:16px;border-radius:999px;background:var(--atta)}
+.meter i.on{background:var(--haldi)}
+.keep{margin-top:16px;padding:16px;border-radius:14px;background:var(--atta);display:none}
+.keep.show{display:block}
+.linkish{text-decoration:underline;color:var(--muted);font-size:15px;margin-top:18px}
+
+
+/* recipes */
+.recipes{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;margin-top:38px;align-items:center}
+.card-paper{background:#fff;border-radius:6px;padding:30px 32px;box-shadow:14px 14px 0 var(--malai),14px 14px 0 1.5px var(--line);border:1.5px solid var(--line);transform:rotate(-1.2deg);max-width:560px}
+.card-paper .top,dialog .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid var(--mitti);padding-bottom:14px}
+.card-paper h3,dialog h3{font-size:30px;font-weight:800;max-width:14ch}
+.tag{background:var(--haldi);border-radius:999px;padding:4px 14px;font-weight:700;font-size:14.5px;white-space:nowrap}
+.card-paper .cols,dialog .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:16px 0}
+.card-paper h4,dialog h4{font-family:var(--display);font-size:16.5px;font-weight:700;color:var(--tawa);margin-bottom:4px}
+.card-paper ul,dialog ul{list-style:none;font-size:15.5px;line-height:1.5}
+.card-paper ol,dialog ol{padding-left:22px;font-size:15.5px;line-height:1.5}
+.card-paper ol li,dialog ol li{margin:5px 0}
+.card-paper ol li::marker,dialog ol li::marker{font-family:var(--display);font-weight:800;color:var(--tawa)}
+.phone{width:330px;margin:0 auto;background:#1c130c;border-radius:36px;padding:12px;box-shadow:0 18px 0 -8px var(--line)}
+.phone .screen{background:#ece3d4;border-radius:26px;overflow:hidden}
+.chat-head{background:#1f5c46;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;font-weight:700}
+.chat-head i{width:34px;height:34px;border-radius:50%;background:var(--haldi);display:flex;align-items:center;justify-content:center;font-style:normal;color:var(--mitti);font-family:var(--display);font-weight:800}
+.chat-head small{display:block;font-weight:400;font-size:12.5px;opacity:.85}
+.chat{padding:14px 12px 18px;display:flex;flex-direction:column;gap:9px}
+.bubble{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 10px;max-width:88%;font-size:14.5px;line-height:1.35;color:var(--ink);box-shadow:0 1px 0 #d6c9b3}
+.bubble.me{align-self:flex-end;background:#d9f2c9;border-radius:14px 4px 14px 14px}
+.bubble time{display:block;text-align:right;font-size:11.5px;color:var(--muted);margin-top:2px}
+.video{position:relative;background:var(--atta);border-radius:10px;display:flex;justify-content:center;padding:10px;margin-bottom:7px}
+.video:after{content:"";position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(39,24,14,.78)}
+.video:before{content:"";position:absolute;left:50%;top:50%;z-index:1;margin:-11px 0 0 -6px;border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent}
+.bubble a{color:#1f5c46;font-weight:700}
+.dish .see{padding:0;background:none;color:var(--tawa);text-decoration:underline;font-size:14.5px;text-align:left;font-weight:600}
+dialog{border:0;border-radius:18px;padding:0;max-width:640px;width:calc(100% - 32px);color:var(--ink);background:var(--malai);margin:auto}
+dialog::backdrop{background:rgba(39,24,14,.6)}
+dialog .inner{padding:28px 30px 26px}
+dialog .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px;border-top:1.5px solid var(--line);padding-top:14px;font-size:14.5px;color:var(--muted)}
+dialog .foot span{flex:1;min-width:220px}
+@media (max-width:920px){.recipes{grid-template-columns:1fr}.card-paper{transform:none}}
+@media (max-width:560px){.card-paper .cols,dialog .cols{grid-template-columns:1fr}}
+
+/* delivery, pantry, refer, start */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:36px}
+.three h3{margin-bottom:6px}
+.three p{color:var(--muted)}
+.pin{margin-top:34px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pin input{font:inherit;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);width:210px;background:#fff}
+.pin output{font-weight:600}
+.pantry{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px}
+.item small{display:block;color:var(--muted)}
+.item button{padding:8px 14px;border-radius:8px;font-weight:700;background:var(--atta);color:var(--tawa);white-space:nowrap}
+.item button.in{background:var(--leaf);color:#fff}
+.refer{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.refer h2{max-width:14ch}
+.code{background:#5a3a22;border-radius:16px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:20px}
+.code b{font-family:var(--display);font-size:28px;letter-spacing:.04em}
+.startgrid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:34px}
+.check{list-style:none;columns:2;gap:20px}
+.check li{padding:8px 0 8px 30px;position:relative;break-inside:avoid}
+.check li:before{content:"";position:absolute;left:0;top:13px;width:16px;height:9px;border-left:3px solid var(--leaf);border-bottom:3px solid var(--leaf);transform:rotate(-45deg)}
+details{border-bottom:1.5px solid var(--line);padding:16px 0}
+details summary{font-family:var(--display);font-weight:700;font-size:20px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+details summary:after{content:"+";font-size:26px;line-height:1;color:var(--tawa)}
+details[open] summary:after{content:"–"}
+details p{margin-top:10px;color:var(--muted);max-width:68ch}
+.judges .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}
+.judges .tile{background:#5a3a22;border-radius:16px;padding:20px}
+.judges .tile b{font-family:var(--display);font-size:34px;font-weight:800;color:var(--haldi);display:block;line-height:1.05}
+.judges .tile span{font-size:15.5px;color:#e9d9c2}
+footer{background:var(--ink);color:#cdb89b;padding:34px 0;font-size:15px}
+@media (max-width:920px){
+  .hero .wrap.split,.builder,.account,.refer,.startgrid{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr)} .steps,.three,.pantry,.judges .tiles{grid-template-columns:1fr 1fr}
+  .rules{grid-template-columns:1fr}.rule:nth-child(odd){border-right:0}.rule:nth-child(even){padding-left:0}
+  nav.main{display:none} .band{padding:60px 0}
+}
+@media (max-width:560px){.weeks{grid-template-columns:repeat(2,1fr)}.steps,.three,.pantry,.judges .tiles,.facts{grid-template-columns:1fr}.check{columns:1}.rule{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.week{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="ribbon"><div class="wrap">
+  <span>Prototype for Verdict 2.0 by Bihar Consulting Group. Prices, dishes and dates are illustrative.</span>
+  <button class="toggle" id="notesBtn" aria-pressed="false">Show strategy notes</button>
+</div></div>
+
+<header class="site"><div class="wrap">
+  <a class="logo" href="#top"><svg width="34" height="34" viewBox="0 0 58 58" aria-hidden="true"><path d="M8 22 29 12 50 22V44L29 54 8 44Z" fill="#6b4423"/><path d="M8 22 29 32 50 22M29 32V54" fill="none" stroke="#fbf5ea" stroke-width="2.5"/><path d="M29 14C29 4 38 2 44 3 44 10 38 15 29 14Z" fill="#e9a820"/></svg>harvestbox</a>
+  <nav class="main" aria-label="Main">
+    <a href="#how">How it works</a><a href="#plans">Plans</a><a href="#menu">Menu</a><a href="#recipes">Recipes</a><a href="#week">Your week</a><a href="#pantry">Pantry</a><a href="#refer">Refer a friend</a>
+  </nav>
+  <a class="btn small" href="#plans">Choose your plan</a>
+</div></header>
+
+<main id="top">
+
+<section class="hero"><div class="wrap split">
+  <div>
+    <h1><span>No lock-in.</span><span>Skip free.</span><span>Change until the day before.</span></h1>
+    <p class="sub">Fresh ingredients and recipe cards for 2 or 4 dinners a week. Skip a week, take a break or swap a dish whenever your plans change.</p>
+    <div class="cta"><a class="btn" href="#plans">Choose your plan</a><a class="btn ghost" href="#menu">See this week's menu</a></div>
+    <div class="deadline" role="status">This week's orders close in <b id="clock">18h 24m 00s</b> for <span id="delDay">Saturday</span> delivery</div>
+  </div>
+  <div class="planner" aria-label="Try skipping a week">
+    <h3>Try it: your next four boxes</h3>
+    <p>Tap a week to skip it. Nothing is charged for a skipped week.</p>
+    <div class="weeks" id="weeks"></div>
+    <div class="sum"><span id="weekSum">You pay for 4 boxes.</span><button class="btn small ghost" id="breakBtn">Pause all four weeks</button></div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="facts">
+    <div><b>4.6 out of 5</b><span>from customers who have cooked with us for six months or more</span></div>
+    <div><b>62,000 homes</b><span>get a HarvestBox delivered</span></div>
+    <div><b>5 cities</b><span>each with its own fresh kitchen and packing centre</span></div>
+  </div>
+  <p class="note"><b>Why the page opens this way.</b> Only 2.8% of website visitors place a first order today. The first screen now leads with flexibility, which 34% of leaving customers said was missing, shows the order deadline, and lets a visitor try skipping before signing up.</p>
+</div></section>
+
+<section class="band dark" id="how"><div class="wrap">
+  <h2>Three steps from box to dinner</h2>
+  <div class="steps">
+    <div class="step"><h3>Pick 2 or 4 dinners</h3><p>Choose for two people or four, from more than twenty dishes each week.</p></div>
+    <div class="step"><h3>We deliver fresh</h3><p>On the day and time slot you choose, with every ingredient measured out.</p></div>
+    <div class="step"><h3>Cook and enjoy</h3><p>Follow the recipe card in the box, or the video we send on WhatsApp.</p></div>
+  </div>
+</div></section>
+
+<section class="band" id="rules"><div class="wrap">
+  <h2>Your week changes. Your box can too.</h2>
+  <p class="lede">Four rules, written plainly, so you always know where you stand.</p>
+  <div class="rules">
+    <div class="rule"><b>Skip</b><div><h3>Any week, free</h3><p>Travelling or eating out? Skip the week. There is no fee and no limit on how often.</p></div></div>
+    <div class="rule"><b>Pause</b><div><h3>Up to four weeks</h3><p>We remind you three days before the break ends. Then your box resumes on its own.</p></div></div>
+    <div class="rule"><b>Change</b><div><h3>Until 24 hours before</h3><p>Swap a dish, switch between 2 and 4 dinners, or move your delivery slot.</p></div></div>
+    <div class="rule"><b>Leave</b><div><h3>In two taps</h3><p>No lock-in period. You are charged only when a week's order locks.</p></div></div>
+  </div>
+  <p class="note"><b>Problem this answers.</b> “Too rigid, difficult to skip” was the top reason customers left, at 34%. These are the four rules of Proposal A. The 24-hour window and four-week pause are design choices we test in the one-city pilot.</p>
+</div></section>
+
+<section class="band atta" id="plans"><div class="wrap">
+  <h2>Build the box that fits your home</h2>
+  <p class="lede">Two choices set your plan. You can change both any week.</p>
+  <div class="builder">
+    <div>
+      <div class="label" id="mealsLabel">Dinners a week</div>
+      <div class="seg" role="group" aria-labelledby="mealsLabel"><button data-meals="2" aria-pressed="false">2 dinners</button><button data-meals="4" aria-pressed="true">4 dinners</button></div>
+      <div class="label" id="peopleLabel">Cooking for</div>
+      <div class="seg" role="group" aria-labelledby="peopleLabel"><button data-people="2" aria-pressed="true">2 people</button><button data-people="4" aria-pressed="false">4 people</button></div>
+      <table class="prices" aria-label="All plan prices">
+        <tr><th></th><th>2 people</th><th>4 people</th></tr>
+        <tr><th>2 dinners</th><td data-cell="2-2">₹2,300</td><td data-cell="2-4">₹3,700</td></tr>
+        <tr><th>4 dinners</th><td data-cell="4-2">₹3,800</td><td data-cell="4-4">₹6,500</td></tr>
+      </table>
+      <p class="fine">Delivery is included in the areas we serve from our city centres.</p>
+    </div>
+    <div class="quote" aria-live="polite">
+      <div class="price" id="price">₹3,800</div>
+      <div class="per" id="per">₹475 a serving</div>
+      <ul>
+        <li><span>Your box</span><span id="boxDesc">4 dinners for 2 people</span></li>
+        <li><span>Servings a week</span><span id="servings">8</span></li>
+        <li><span>When you pay</span><span>When the week's order locks</span></li>
+        <li><span>Skipping or pausing</span><span>Free</span></li>
+      </ul>
+      <a class="btn" href="#menu">Pick dishes for this box</a>
+    </div>
+  </div>
+  <p class="note"><b>Problem this answers.</b> “Too expensive” was 27% of exits and “food waste or portions” 11%. One fixed ₹5,200 box becomes four sizes, so the entry price falls to ₹2,300 without discounting the food. Bigger boxes cost less per serving, which nudges customers upward. These prices are our assumptions, reconciled to the case in Appendix A1.</p>
+</div></section>
+
+<section class="band" id="menu"><div class="wrap">
+  <h2>This week's menu</h2>
+  <p class="lede">More than twenty dishes a week. A dish does not come back for six weeks unless you pick it again.</p>
+  <div class="tabs" id="tabs" role="group" aria-label="Menu ranges">
+    <button data-range="all" aria-pressed="true">All dishes</button><button data-range="everyday" aria-pressed="false">Everyday</button><button data-range="quick" aria-pressed="false">Quick, under 25 minutes</button><button data-range="veg" aria-pressed="false">Vegetarian</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="tray" aria-live="polite"><b id="trayCount">0 of 4 dinners chosen</b><div class="chips" id="chips"></div><a class="btn small" href="#week">Review your week</a></div>
+  <p class="note"><b>Problem this answers.</b> “Menu becomes repetitive” was 18% of exits. The weekly choice roughly doubles, sits in three simple ranges, and any dish can be swapped. New dishes reuse ingredients already stocked, so more choice does not add food waste.</p>
+</div></section>
+
+<section class="band atta" id="recipes"><div class="wrap">
+  <h2>Every dish comes with its recipe, twice</h2>
+  <p class="lede">A printed card sits in the box. The same recipe arrives on WhatsApp as a short video on the day you cook.</p>
+  <div class="recipes">
+    <div class="card-paper" id="paperCard"></div>
+    <div class="phone" aria-label="WhatsApp message with the recipe video"><div class="screen">
+      <div class="chat-head"><i>h</i><div>HarvestBox<small>Business account</small></div></div>
+      <div class="chat">
+        <div class="bubble"><div class="video" id="videoArt"></div><b>Tonight: Paneer butter masala</b><br>30 minutes, 5 steps, for 2 people.<br><a href="#recipes">Watch the 2-minute video</a><time>5:40 pm</time></div>
+        <div class="bubble">Everything is in bag 1 of your box. You only need oil, salt and a pan.<time>5:40 pm</time></div>
+        <div class="bubble me">CARD<time>5:52 pm</time></div>
+        <div class="bubble">Here is the recipe card again as a picture, in case the printed one is lost.<br><a href="#recipes">Open recipe card</a><time>5:52 pm</time></div>
+      </div>
+    </div></div>
+  </div>
+  <p class="fine" style="margin-top:30px;font-size:16px">Want to see one before you order? Open any dish on the menu and choose “See the recipe”.</p>
+  <p class="note"><b>Problem this answers.</b> 45% of customers leave by month three, and a first cook that goes badly is an easy reason to stop. The case already sends recipe cards in the box. We add the same recipe as a WhatsApp video, a way to get the card again, and a preview on the website so a visitor can judge the effort before paying.</p>
+</div></section>
+
+<section class="band dark" id="week"><div class="wrap">
+  <h2>Your week, after you sign in</h2>
+  <p class="lede">Everything you might want to change sits on one screen. Try the buttons.</p>
+  <div class="account">
+    <div class="panel">
+      <h3 id="weekTitle">Box for Saturday</h3>
+      <div id="weekRows" style="margin-top:8px"></div>
+      <div class="rowline"><div><b>Delivery slot</b><small>Change it any week</small></div>
+        <select id="slot" aria-label="Delivery slot"><option>Saturday, 6 to 8 pm</option><option>Saturday, 8 to 10 am</option><option>Sunday, 10 am to 12 noon</option><option>Wednesday, 7 to 9 pm</option></select></div>
+      <div class="actions">
+        <button class="btn small" id="skipBtn">Skip this week</button>
+        <button class="btn small ghost" id="pauseBtn">Pause for 2 weeks</button>
+        <button class="btn small ghost" id="sizeBtn">Switch to 2 dinners</button>
+      </div>
+      <div class="status" id="status" role="status">Your box is confirmed. You can change it until 24 hours before delivery.</div>
+      <button class="linkish" id="cancelBtn">Cancel subscription</button>
+      <div class="keep" id="keep">
+        <b>Before you go, would one of these suit you better?</b>
+        <div class="actions"><button class="btn small" data-keep="smaller">Take a smaller box</button><button class="btn small ghost" data-keep="skip">Skip a week</button><button class="btn small ghost" data-keep="pause">Pause for 4 weeks</button></div>
+        <button class="linkish" data-keep="cancel">Cancel anyway</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Your credit</h3>
+      <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+      <p><b>3 of 4 delivered orders.</b> One more and ₹200 comes off your next box.</p>
+      <p class="fine">Skipped and paused weeks keep your progress. Orders do not need to be in a row.</p>
+      <div style="border-top:1.5px solid var(--line);margin-top:18px;padding-top:16px">
+        <h3>Forgot to choose?</h3>
+        <p class="fine" style="font-size:15.5px">We remind you on WhatsApp twice. If we still do not hear from you, your usual box is sent.</p>
+      </div>
+    </div>
+  </div>
+  <p class="note"><b>How this protects the business.</b> The case warns that customers may use flexibility to order less. Three guardrails are visible here: a cancelling customer is first offered a smaller box, a skip, then a pause; credit comes after four paid, delivered orders, with skips keeping the progress; and smaller boxes cost more per serving.</p>
+</div></section>
+
+<section class="band" id="delivery"><div class="wrap">
+  <h2>Delivery you do not have to chase</h2>
+  <div class="three">
+    <div><h3>You choose the slot</h3><p>Pick the day and a two-hour window that suits you, and move it when you need to.</p></div>
+    <div><h3>You can see it coming</h3><p>We message you when the box leaves our centre, with a link to track it.</p></div>
+    <div><h3>We pay if we slip</h3><p>A late box or a missing ingredient is credited to your account. You do not have to ask.</p></div>
+  </div>
+  <form class="pin" id="pinForm"><label for="pin" class="label">Check your area</label><input id="pin" inputmode="numeric" maxlength="6" placeholder="6-digit PIN code" aria-describedby="pinOut"><button class="btn small" type="submit">Check</button><output id="pinOut"></output></form>
+  <p class="note"><b>Problem this answers.</b> Delivery problems were 10% of exits. Delivery stays free in core zones, with a small fee in outlying areas to protect margin.</p>
+</div></section>
+
+<section class="band atta" id="pantry"><div class="wrap">
+  <h2>Add something from the pantry</h2>
+  <p class="lede">Extras travel in the same box, so there is no extra delivery charge.</p>
+  <div class="pantry" id="pantryList"></div>
+  <p class="fine" id="pantrySum" aria-live="polite" style="font-size:16.5px;font-weight:600;color:var(--ink);margin-top:16px">Nothing added yet.</p>
+  <p class="note"><b>How this protects the business.</b> Smaller boxes earn less per delivery. Pantry add-ons lift the value of every box without a second delivery. Their income is left out of our financials, so it is upside.</p>
+</div></section>
+
+<section class="band dark" id="refer"><div class="wrap refer">
+  <div>
+    <h2>Give ₹1,000. Get ₹1,000.</h2>
+    <p class="lede">Your friend gets ₹1,000 off their first box. You get ₹1,000 of credit once their second box is delivered.</p>
+    <p class="note"><b>Why this matters.</b> A customer won through paid adverts costs ₹7,000. A referred customer costs about ₹2,000. If one in five new customers comes this way by month 24, the marketing bill falls by about ₹1.8 Cr a year.</p>
+  </div>
+  <div><div class="label">Your code</div><div class="code"><b id="refCode">DINNER-4821</b><button class="btn small" id="copyBtn">Copy code</button></div></div>
+</div></section>
+
+<section class="band" id="start"><div class="wrap">
+  <h2>Your first three boxes</h2>
+  <p class="lede">The first weeks decide whether cooking with us becomes a habit, so we stay close.</p>
+  <div class="startgrid">
+    <div><h3 style="margin-bottom:10px">What you need at home</h3>
+      <ul class="check"><li>A stove and a kadhai or pan</li><li>A pressure cooker</li><li>A knife and a board</li><li>Cooking oil</li><li>Salt and sugar</li><li>About 30 minutes</li></ul></div>
+    <div><h3 style="margin-bottom:10px">What we do</h3>
+      <ul class="check" style="columns:1"><li>Walk you through skip, pause and swap on day one</li><li>Send every recipe as a short WhatsApp video</li><li>Check in after your first box, and call if something went wrong</li><li>Spread your welcome offer across the first three boxes</li></ul></div>
+  </div>
+  <p class="note"><b>Problem this answers.</b> 45% of customers are gone by month three. The first three boxes get a guided start, and the welcome discount is spread out so nobody joins for one cheap box.</p>
+</div></section>
+
+<section class="band atta" id="faq"><div class="wrap">
+  <h2>Questions people ask first</h2>
+  <div style="margin-top:26px;max-width:860px">
+    <details><summary>What happens if I do not choose my dishes?</summary><p>We remind you twice on WhatsApp. If we do not hear back, we send your usual box with dishes picked from the ones you have rated well.</p></details>
+    <details><summary>When am I charged?</summary><p>Only when the week's order locks, 24 hours before delivery. A skipped or paused week is never charged, so there are no refunds to wait for.</p></details>
+    <details><summary>I changed my mind after the order locked. What now?</summary><p>The ingredients are already bought, so the box cannot be cancelled. You can move the delivery slot or send the box to a friend. Once a month we waive a late skip.</p></details>
+    <details><summary>I used to be a customer. Has anything changed?</summary><p>Yes. There is no lock-in, skipping is free, and you can change your box until the day before. Sign in with your old number to pick up where you left off.</p></details>
+    <details><summary>Can I order just one dinner?</summary><p>The smallest box is two dinners. For a single meal tonight, look for HarvestBox kits on quick-delivery apps in your city.</p></details>
+  </div>
+</div></section>
+
+<section class="band dark judges" id="judges"><div class="wrap">
+  <h2>For the judges: what this site is built to change</h2>
+  <p class="lede">This prototype is Proposal A, “Fix the subscription experience”, as a customer would meet it. The numbers below are from our deck.</p>
+  <div class="tiles">
+    <div class="tile"><b>55% → 65%</b><span>customers still active at month three, the case's expected impact</span></div>
+    <div class="tile"><b>₹1.8 Cr</b><span>to build it, tested in one city before any wider rollout</span></div>
+    <div class="tile"><b>₹9.2 → ₹5.0 Cr</b><span>annual loss run-rate by month 24, with referrals and less food waste</span></div>
+    <div class="tile"><b>Month 18</b><span>by when the next round must close. We do not claim break-even in 24 months</span></div>
+  </div>
+</div></section>
+
+</main>
+
+<dialog id="recipeDlg" aria-labelledby="dlgTitle"><div class="inner" id="dlgBody"></div></dialog>
+
+<footer><div class="wrap">HarvestBox is a fictional company from the Verdict 2.0 case problem, The Skill Development Cell, Motilal Nehru College. This is a design prototype by Bihar Consulting Group (Tanishq Anand, Vikash Kumar). Nothing here can be ordered.</div></footer>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const rupee = n => "₹" + n.toLocaleString("en-IN");
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+// strategy notes
+const notesBtn = $("#notesBtn");
+notesBtn.addEventListener("click", () => {
+  const on = document.body.classList.toggle("notes");
+  notesBtn.setAttribute("aria-pressed", on);
+  notesBtn.textContent = on ? "Hide strategy notes" : "Show strategy notes";
+});
+
+// order deadline countdown (demo: always starts at 18h 24m)
+let left = 18 * 3600 + 24 * 60;
+setInterval(() => {
+  left = left > 0 ? left - 1 : 0;
+  const h = Math.floor(left / 3600), m = Math.floor(left % 3600 / 60), s = left % 60;
+  $("#clock").textContent = `${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`;
+}, 1000);
+
+// next four Saturdays
+const saturdays = (() => { const d = new Date(); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); return [0, 1, 2, 3].map(i => { const x = new Date(d); x.setDate(d.getDate() + i * 7); return x; }); })();
+const weekState = [0, 0, 0, 0]; // 0 on, 1 skipped, 2 paused
+function drawWeeks() {
+  $("#weeks").innerHTML = saturdays.map((d, i) => {
+    const st = weekState[i], cls = ["", " skipped", " paused"][st];
+    const label = ["Box coming", "Skipped, no charge", "Paused"][st];
+    const act = st === 0 ? "Skip" : "Bring back";
+    return `<div class="week${cls}"><div class="d">${d.getDate()}</div><div class="m">${MONTHS[d.getMonth()]}, Sat</div><div class="s">${label}</div><button data-w="${i}" aria-label="${act} the box on ${d.getDate()} ${MONTHS[d.getMonth()]}">${act}</button></div>`;
+  }).join("");
+  const n = weekState.filter(s => s === 0).length;
+  $("#weekSum").textContent = weekState.every(s => s === 2) ? "Paused. We remind you three days before, then your box resumes." : `You pay for ${n} ${n === 1 ? "box" : "boxes"}. Skipping is free.`;
+  $("#breakBtn").textContent = weekState.every(s => s === 2) ? "End the pause" : "Pause all four weeks";
+}
+$("#weeks").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; const i = +b.dataset.w; weekState[i] = weekState[i] === 0 ? 1 : 0; drawWeeks(); });
+$("#breakBtn").addEventListener("click", () => { const paused = weekState.every(s => s === 2); weekState.fill(paused ? 0 : 2); drawWeeks(); });
+drawWeeks();
+$("#weekTitle").textContent = `Box for Saturday, ${saturdays[0].getDate()} ${MONTHS[saturdays[0].getMonth()]}`;
+
+// plan builder
+const PRICES = { "2-2": 2300, "2-4": 3700, "4-2": 3800, "4-4": 6500 };
+const plan = { meals: 4, people: 2 };
+function drawPlan() {
+  const key = `${plan.meals}-${plan.people}`, price = PRICES[key], servings = plan.meals * plan.people;
+  $("#price").innerHTML = rupee(price) + '<span style="font-size:20px;font-weight:600;letter-spacing:0"> a week</span>';
+  $("#per").textContent = rupee(Math.round(price / servings)) + " a serving";
+  $("#boxDesc").textContent = `${plan.meals} dinners for ${plan.people} people`;
+  $("#servings").textContent = servings;
+  $$("[data-meals]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.meals === plan.meals));
+  $$("[data-people]").forEach(b => b.setAttribute("aria-pressed", +b.dataset.people === plan.people));
+  $$("[data-cell]").forEach(c => c.classList.toggle("on", c.dataset.cell === key));
+  $("#sizeBtn").textContent = plan.meals === 4 ? "Switch to 2 dinners" : "Switch to 4 dinners";
+  while (box.length > plan.meals) box.pop();
+  drawMenu(); drawWeekRows();
+}
+$$("[data-meals]").forEach(b => b.addEventListener("click", () => { plan.meals = +b.dataset.meals; drawPlan(); }));
+$$("[data-people]").forEach(b => b.addEventListener("click", () => { plan.people = +b.dataset.people; drawPlan(); }));
+
+// menu
+const DISHES = [
+  ["Paneer butter masala", 30, 1, ["everyday", "veg"], ["#e58a2b", "#f6e7c8", "#2f6b45"]],
+  ["Dal makhani with jeera rice", 35, 1, ["everyday", "veg"], ["#5a3320", "#f4ecd8", "#e9a820"]],
+  ["Veg pulao and raita", 20, 1, ["quick", "veg"], ["#e9c46a", "#ffffff", "#2f6b45"]],
+  ["Chole with kulcha", 30, 1, ["everyday", "veg"], ["#b5651d", "#f1dfc0", "#b8402d"]],
+  ["Palak paneer", 25, 1, ["everyday", "veg"], ["#3f7d4e", "#f6e7c8", "#e9a820"]],
+  ["Rajma chawal", 30, 1, ["everyday", "veg"], ["#8c2f1b", "#ffffff", "#2f6b45"]],
+  ["Butter chicken", 35, 0, ["everyday"], ["#e0702a", "#f6e7c8", "#2f6b45"]],
+  ["Chicken biryani", 40, 0, ["everyday"], ["#d9a441", "#8c4a1e", "#2f6b45"]],
+  ["Kerala fish curry", 30, 0, ["everyday"], ["#e9a820", "#f4ecd8", "#b8402d"]],
+  ["Egg curry with paratha", 20, 0, ["quick"], ["#c9682a", "#fff3d6", "#e9a820"]],
+  ["Veg hakka noodles", 20, 1, ["quick", "veg"], ["#d8b26a", "#e0702a", "#2f6b45"]],
+  ["Mushroom matar", 20, 1, ["quick", "veg"], ["#9a6b47", "#3f7d4e", "#f6e7c8"]],
+  ["Pav bhaji", 20, 1, ["quick", "veg"], ["#d1552a", "#f1dfc0", "#2f6b45"]],
+  ["Thai green curry with rice", 25, 1, ["veg"], ["#7fae5a", "#ffffff", "#b8402d"]],
+  ["Kadhai chicken", 30, 0, ["everyday"], ["#a8431f", "#3f7d4e", "#e9a820"]],
+  ["Lemon rice with peanut chutney", 15, 1, ["quick", "veg"], ["#f0cf4a", "#c98b3a", "#2f6b45"]]
+].map(([name, mins, veg, ranges, c]) => ({ name, mins, veg, ranges, c }));
+const plate = c => `<svg width="132" height="132" viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="70" fill="#fff" stroke="#e2cfb0" stroke-width="5"/><circle cx="75" cy="75" r="53" fill="#fbf5ea"/><path d="M36 82a39 34 0 0 1 78 0z" fill="${c[0]}"/><ellipse cx="60" cy="58" rx="19" ry="15" fill="${c[1]}" stroke="#e2cfb0" stroke-width="2"/><circle cx="96" cy="60" r="11" fill="${c[2]}"/><circle cx="84" cy="98" r="9" fill="${c[2]}"/><circle cx="58" cy="100" r="6" fill="${c[1]}" stroke="#e2cfb0" stroke-width="2"/></svg>`;
+let range = "all";
+const box = ["Paneer butter masala", "Veg pulao and raita"];
+function drawMenu() {
+  const list = DISHES.filter(d => range === "all" || d.ranges.includes(range));
+  const full = box.length >= plan.meals;
+  $("#grid").innerHTML = list.map(d => {
+    const inBox = box.includes(d.name);
+    return `<article class="dish"><div class="art">${plate(d.c)}</div><div class="body"><h4>${d.name}</h4><div class="meta"><span class="dot${d.veg ? "" : " nv"}" title="${d.veg ? "Vegetarian" : "Non-vegetarian"}"></span>${d.veg ? "Vegetarian" : "Non-vegetarian"}<span>${d.mins} min</span></div><button class="see" data-recipe="${d.name}">See the recipe</button><button data-dish="${d.name}" class="${inBox ? "in" : ""}" ${!inBox && full ? "disabled" : ""}>${inBox ? "In your box. Remove" : full ? "Box is full" : "Add to box"}</button></div></article>`;
+  }).join("");
+  $("#trayCount").textContent = `${box.length} of ${plan.meals} dinners chosen`;
+  $("#chips").innerHTML = box.map(n => `<span class="chip">${n}</span>`).join("");
+}
+$("#grid").addEventListener("click", e => { const b = e.target.closest("button[data-dish]"); if (!b) return; const n = b.dataset.dish, i = box.indexOf(n); if (i >= 0) box.splice(i, 1); else if (box.length < plan.meals) box.push(n); drawMenu(); drawWeekRows(); });
+$("#tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; range = b.dataset.range; $$("#tabs button").forEach(x => x.setAttribute("aria-pressed", x === b)); drawMenu(); });
+
+// recipes: what is in the box, what the customer needs at home, and the steps
+const RECIPES = {"Paneer butter masala": [["Paneer cubes", "Tomato-cashew masala base", "Butter and cream", "Spice sachet, kasuri methi", "Basmati rice"], ["Oil", "Salt", "A pan and a pot"], ["Rinse the rice and put it on to cook.", "Melt the butter in a pan, add the masala base and cook for 5 minutes until it thickens.", "Stir in the spice sachet, half a cup of water and salt. Simmer for 5 minutes.", "Add the paneer and cream. Simmer for 3 minutes.", "Crush the kasuri methi over the top and serve with the rice."]], "Dal makhani with jeera rice": [["Boiled black dal and rajma", "Tomato puree, ginger-garlic paste", "Butter and cream", "Spice sachet", "Basmati rice, cumin seeds"], ["Oil", "Salt", "A heavy pot"], ["Heat butter, fry the ginger-garlic paste for a minute, then add the puree and spices.", "Add the boiled dal with a cup of water. Simmer on low for 20 minutes, mashing a little.", "Meanwhile crackle the cumin in oil, add rinsed rice and water, and cook covered.", "Stir the cream into the dal, check the salt and serve over the rice."]], "Veg pulao and raita": [["Basmati rice", "Chopped vegetables", "Whole spice sachet, fried onions", "Curd, cucumber, mint"], ["Oil or ghee", "Salt", "A pressure cooker or pot"], ["Heat oil, add the whole spices and vegetables and fry for 2 minutes.", "Add rinsed rice, water to twice its volume and salt. Cook covered until the water is gone.", "Grate the cucumber into the curd with mint and a pinch of salt.", "Top the pulao with fried onions and serve with the raita."]], "Chole with kulcha": [["Boiled chickpeas", "Onion-tomato masala", "Chole masala sachet", "Kulchas", "Onion and lemon"], ["Oil", "Salt", "A pan and a tawa"], ["Heat oil, add the masala and cook for 4 minutes.", "Add the chickpeas, the spice sachet and a cup of water. Simmer for 15 minutes, mashing a few.", "Warm the kulchas on a tawa with a little butter or oil.", "Serve with sliced onion and a squeeze of lemon."]], "Palak paneer": [["Spinach puree", "Paneer cubes", "Chopped onion, ginger-garlic paste", "Cream, spice sachet", "Rotis"], ["Oil", "Salt", "A pan"], ["Fry the onion in oil until golden, then add the ginger-garlic paste.", "Add the spinach puree and spices. Cook for 6 minutes.", "Add the paneer and simmer for 3 minutes.", "Finish with cream and serve with warm rotis."]], "Rajma chawal": [["Boiled rajma", "Onion-tomato masala", "Spice sachet", "Basmati rice", "Fresh coriander"], ["Oil", "Salt", "A pot and a pan"], ["Put the rinsed rice on to cook.", "Heat oil, cook the masala for 4 minutes, then add the spices.", "Add the rajma with a cup of water and simmer for 15 minutes.", "Scatter coriander and serve over the rice."]], "Butter chicken": [["Marinated chicken", "Makhani gravy base", "Butter and cream", "Kasuri methi", "Basmati rice"], ["Oil", "Salt", "A pan and a pot"], ["Rinse the rice and put it on to cook.", "Sear the chicken in hot oil for 6 minutes until browned.", "Add butter and the gravy base. Simmer for 12 minutes until the chicken is cooked through.", "Stir in the cream and kasuri methi, and serve with the rice."]], "Chicken biryani": [["Marinated chicken", "Basmati rice", "Fried onions, biryani masala", "Mint and coriander", "Saffron milk"], ["Oil or ghee", "Salt", "A heavy pot with a lid"], ["Boil the rice in salted water until almost done, then drain.", "Cook the chicken with the masala in ghee for 10 minutes.", "Layer the rice over the chicken with onions, herbs and saffron milk.", "Cover tightly and cook on the lowest flame for 15 minutes. Rest for 5 before serving."]], "Kerala fish curry": [["Fish pieces", "Coconut milk", "Curry paste, tamarind", "Curry leaves, mustard seeds", "Rice"], ["Oil", "Salt", "A wide pan"], ["Put the rice on to cook.", "Crackle the mustard seeds and curry leaves in oil, then fry the curry paste for 2 minutes.", "Add tamarind, a cup of water and salt. Bring to a simmer and slide in the fish.", "Cook for 8 minutes, pour in the coconut milk and warm through without boiling."]], "Egg curry with paratha": [["Eggs", "Onion-tomato masala", "Spice sachet", "Parathas", "Fresh coriander"], ["Oil", "Salt", "A pan and a tawa"], ["Boil the eggs for 9 minutes, cool and peel.", "Cook the masala and spices in oil for 4 minutes, then add a cup of water.", "Halve the eggs, add them to the gravy and simmer for 5 minutes.", "Heat the parathas on a tawa and serve with coriander on top."]], "Veg hakka noodles": [["Noodles", "Sliced vegetables", "Chopped garlic", "Soy and vinegar sauce sachet", "Spring onion"], ["Oil", "Salt", "A wok or kadhai"], ["Boil the noodles for 4 minutes, drain and toss with a little oil.", "Fry the garlic on high heat, add the vegetables and stir for 3 minutes.", "Add the noodles and the sauce. Toss for 2 minutes.", "Finish with spring onion and serve straight away."]], "Mushroom matar": [["Mushrooms", "Green peas", "Onion-tomato masala", "Spice sachet", "Rotis"], ["Oil", "Salt", "A pan"], ["Fry the mushrooms in hot oil for 4 minutes until they lose their water.", "Add the masala and spices and cook for 4 minutes.", "Add the peas and half a cup of water. Simmer for 6 minutes.", "Serve with warm rotis."]], "Pav bhaji": [["Boiled, mashed vegetables", "Pav bhaji masala", "Butter", "Pav", "Onion and lemon"], ["Salt", "A wide pan or tawa"], ["Melt butter, add the vegetables and the masala.", "Add half a cup of water and mash while it cooks for 10 minutes.", "Split the pav and toast it in butter.", "Top the bhaji with chopped onion and a squeeze of lemon."]], "Thai green curry with rice": [["Green curry paste", "Coconut milk", "Vegetables and tofu", "Basil leaves", "Jasmine rice"], ["Oil", "Salt and a pinch of sugar", "A pan and a pot"], ["Put the rice on to cook.", "Fry the curry paste in oil for a minute, then pour in the coconut milk.", "Add the vegetables and tofu. Simmer for 10 minutes.", "Season, tear in the basil and serve over the rice."]], "Kadhai chicken": [["Chicken pieces", "Capsicum and onion cubes", "Kadhai masala", "Tomato puree", "Rotis"], ["Oil", "Salt", "A kadhai"], ["Brown the chicken in hot oil for 6 minutes.", "Add the puree and kadhai masala. Cook covered for 12 minutes.", "Add the capsicum and onion and cook for 4 minutes so they stay crisp.", "Serve with warm rotis."]], "Lemon rice with peanut chutney": [["Steamed rice", "Peanuts, mustard seeds, curry leaves", "Turmeric", "Lemon", "Peanut chutney mix"], ["Oil", "Salt", "A pan"], ["Fry the peanuts, mustard seeds and curry leaves in oil until they crackle.", "Add turmeric and the rice. Toss for 3 minutes until hot.", "Squeeze in the lemon and add salt.", "Stir the chutney mix into a little water and serve alongside."]]};
+function recipeHTML(name, titleId) {
+  const d = DISHES.find(x => x.name === name), [inBox, home, steps] = RECIPES[name];
+  return `<div class="top"><h3${titleId ? ` id="${titleId}"` : ""}>${name}</h3><span class="tag">${d.mins} min</span></div>
+    <div class="cols"><div><h4>In your box</h4><ul>${inBox.map(i => `<li>${i}</li>`).join("")}</ul></div><div><h4>From your kitchen</h4><ul>${home.map(i => `<li>${i}</li>`).join("")}</ul></div></div>
+    <h4>Method</h4><ol>${steps.map(i => `<li>${i}</li>`).join("")}</ol>`;
+}
+const dlg = $("#recipeDlg");
+function openRecipe(name) {
+  $("#dlgBody").innerHTML = recipeHTML(name, "dlgTitle") +
+    `<div class="foot"><span>Every ingredient is measured for ${plan.people} people. The video arrives on WhatsApp on the day you cook.</span><button class="btn small" id="dlgClose">Close</button></div>`;
+  dlg.showModal();
+  $("#dlgClose").addEventListener("click", () => dlg.close());
+}
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+$("#grid").addEventListener("click", e => { const b = e.target.closest("[data-recipe]"); if (b) openRecipe(b.dataset.recipe); });
+$("#paperCard").innerHTML = recipeHTML("Paneer butter masala");
+$("#videoArt").innerHTML = plate(DISHES[0].c);
+
+// your week
+function drawWeekRows() {
+  const rows = box.length ? box : ["No dishes chosen yet"];
+  $("#weekRows").innerHTML = rows.map((n, i) => `<div class="rowline"><div><b>${n}</b><small>${box.length ? "For " + plan.people + " people" : "We will send your usual picks"}</small></div>${box.length ? `<button class="btn small ghost" data-swap="${i}">Swap</button>` : ""}</div>`).join("");
+}
+$("#weekRows").addEventListener("click", e => { const b = e.target.closest("[data-swap]"); if (!b) return; const i = +b.dataset.swap; const free = DISHES.map(d => d.name).filter(n => !box.includes(n)); const cur = DISHES.findIndex(d => d.name === box[i]); const next = free.find(n => DISHES.findIndex(d => d.name === n) > cur) || free[0]; box[i] = next; drawMenu(); drawWeekRows(); say(`Swapped in ${next}. No change to your price.`); });
+const statusEl = $("#status");
+function say(msg, kind = "") { statusEl.className = "status " + kind; statusEl.textContent = msg; }
+let skipped = false, paused = false;
+$("#skipBtn").addEventListener("click", () => { skipped = !skipped; paused = false; $("#skipBtn").textContent = skipped ? "Bring this week back" : "Skip this week"; $("#pauseBtn").textContent = "Pause for 2 weeks"; say(skipped ? `Skipped. Nothing is charged this week. Your next box is on ${saturdays[1].getDate()} ${MONTHS[saturdays[1].getMonth()]}, and your credit progress is kept.` : "Your box is back on. You can change it until 24 hours before delivery.", skipped ? "off" : ""); });
+$("#pauseBtn").addEventListener("click", () => { paused = !paused; skipped = false; $("#skipBtn").textContent = "Skip this week"; $("#pauseBtn").textContent = paused ? "End the pause" : "Pause for 2 weeks"; say(paused ? `Paused until ${saturdays[2].getDate()} ${MONTHS[saturdays[2].getMonth()]}. We remind you three days before, then your box resumes on its own.` : "Pause ended. Your box is confirmed for this week.", paused ? "warn" : ""); });
+$("#sizeBtn").addEventListener("click", () => { plan.meals = plan.meals === 4 ? 2 : 4; drawPlan(); say(`Switched to ${plan.meals} dinners for ${plan.people} people, ${rupee(PRICES[plan.meals + "-" + plan.people])} this week.`); });
+$("#cancelBtn").addEventListener("click", () => $("#keep").classList.add("show"));
+$("#keep").addEventListener("click", e => { const b = e.target.closest("[data-keep]"); if (!b) return; const k = b.dataset.keep; $("#keep").classList.remove("show");
+  if (k === "smaller") { plan.meals = 2; drawPlan(); say(`You are on 2 dinners for ${plan.people} people now, ${rupee(PRICES["2-" + plan.people])} a week.`); }
+  else if (k === "skip") { if (!skipped) $("#skipBtn").click(); }
+  else if (k === "pause") { paused = true; skipped = false; $("#pauseBtn").textContent = "End the pause"; say(`Paused for four weeks, until ${saturdays[3].getDate()} ${MONTHS[saturdays[3].getMonth()]}. We remind you three days before, then your box resumes on its own.`, "warn"); }
+  else say("Subscription cancelled. Nothing more will be charged. You can come back any time with the same number.", "off"); });
+
+// pin code check (demo logic only)
+$("#pinForm").addEventListener("submit", e => { e.preventDefault(); const v = $("#pin").value.trim(), out = $("#pinOut");
+  if (!/^\d{6}$/.test(v)) { out.textContent = "Enter the six digits of your PIN code."; out.style.color = "var(--kumkum)"; return; }
+  out.style.color = "var(--leaf)"; out.textContent = +v[5] >= 7 ? "We deliver here. This area is outside our core zone, so a small delivery fee applies." : "We deliver here, and delivery is free."; });
+
+// pantry
+const PANTRY = [["Tomato-onion masala base", "250 g jar", 180], ["Garam masala blend", "50 g tin", 120], ["Mango pickle", "200 g jar", 150], ["Roasted makhana", "80 g pack", 140], ["Gulab jamun, ready to warm", "Serves 4", 220], ["Cold-pressed mustard oil", "500 ml", 260]];
+const cart = new Set();
+function drawPantry() {
+  $("#pantryList").innerHTML = PANTRY.map(([n, d, p], i) => `<div class="item"><div><b>${n}</b><small>${d}, ${rupee(p)}</small></div><button data-p="${i}" class="${cart.has(i) ? "in" : ""}">${cart.has(i) ? "Added. Remove" : "Add to box"}</button></div>`).join("");
+  const total = [...cart].reduce((s, i) => s + PANTRY[i][2], 0);
+  $("#pantrySum").textContent = cart.size ? `${cart.size} ${cart.size === 1 ? "extra" : "extras"} in this week's box, ${rupee(total)}. No extra delivery charge.` : "Nothing added yet.";
+}
+$("#pantryList").addEventListener("click", e => { const b = e.target.closest("[data-p]"); if (!b) return; const i = +b.dataset.p; cart.has(i) ? cart.delete(i) : cart.add(i); drawPantry(); });
+
+// referral code
+$("#copyBtn").addEventListener("click", async () => { try { await navigator.clipboard.writeText($("#refCode").textContent); } catch (err) {} $("#copyBtn").textContent = "Copied"; setTimeout(() => $("#copyBtn").textContent = "Copy code", 1600); });
+
+drawPlan(); drawPantry();
+if (location.hash === "#notes") notesBtn.click();
+</script>
+</body>
+</html>
